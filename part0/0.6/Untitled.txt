@@ -1,0 +1,7 @@
+note over browser:
+browser starts executing the event handler
+that redraws updated notes and send the new note to server
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server-->browser: HTTP status 201 (created)
