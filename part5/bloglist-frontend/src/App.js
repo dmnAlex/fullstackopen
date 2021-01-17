@@ -103,7 +103,7 @@ const App = () => {
               {user.name} logged-in
               <button onClick={handleLogout}>logout</button>
             </p>
-            <Togglable buttonLabel1='new note' buttonLabel2='cancel'>
+            <Togglable buttonLabel1='new blog' buttonLabel2='cancel'>
               <BlogForm addBlog={addBlog} />
             </Togglable>
             {blogs.sort((a, b) => b.likes - a.likes).map(blog =>

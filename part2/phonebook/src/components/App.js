@@ -20,7 +20,7 @@ const App = () => {
       })
   }, [])
 
-  const personsToShow = persons.filter(person => person.name.toLowerCase().includes(newSearch))
+  const personsToShow = persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()))
 
   const showNotification = (notification, color) => {
     setNotificationMessage({ message: notification, color: color })
@@ -55,10 +55,11 @@ const App = () => {
             showNotification(`Changed ${newName}'s phone number`, 'green')
           })
           .catch(error => {
-            setPersons(persons.filter(person => person.id !== updateId))
-            setNewName('')
-            setNewNumber('')
-            showNotification(`Information of ${newName} has already been removed from server`, 'red')
+            // setPersons(persons.filter(person => person.id !== updateId))
+            // setNewName('')
+            // setNewNumber('')
+            // showNotification(`Information of ${newName} has already been removed from server`, 'red')
+            showNotification(error.response.data.error, 'red')
           })
       }
       return
@@ -71,6 +72,9 @@ const App = () => {
         setNewName('')
         setNewNumber('')
         showNotification(`Added ${returnedPerson.name}`, 'green')
+      })
+      .catch(error => {
+        showNotification(error.response.data.error, 'red')
       })
   }
 
