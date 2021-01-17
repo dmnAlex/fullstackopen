@@ -34,11 +34,11 @@ const Blog = ({ blog, addLike, deleteBlog, isCreator }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <div>
         {blog.title} {blog.author} <button onClick={() => { setVisible(!visible) }}>{visible ? 'hide' : 'view'}</button>
       </div>
-      <div style={hiddenPartStyle}>
+      <div style={hiddenPartStyle} className="togglableContent">
         {blog.url} <br />
         {blog.likes} <button onClick={handleLike}>like</button> <br />
         {blog.user ? blog.user.name : null} <br />
