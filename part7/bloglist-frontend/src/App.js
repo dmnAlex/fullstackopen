@@ -7,13 +7,14 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification, removeNotification } from './reducers/notificationReducer'
+import { initializeBlogs, createBlog, removeBlog, likeBlog } from './reducers/blogReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const notification = useSelector(state => state.message)
-  const color = useSelector(state => state.color)
+  const blogs = useSelector(state => state.blogs)
+  const notification = useSelector(state => state.notification.message)
+  const color = useSelector(state => state.notification.color)
   const dispatch = useDispatch()
 
   const setNotificationMessage = (message, color) => {
@@ -25,9 +26,9 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+      dispatch(initializeBlogs(blogs))
     )
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -66,7 +67,7 @@ const App = () => {
     try {
       const returnedBlog = await blogService.create(blog)
       setNotificationMessage('Blog added successfully', 'green')
-      setBlogs(blogs.concat(returnedBlog))
+      dispatch(createBlog(returnedBlog))
     } catch (exception) {
       setNotificationMessage('Wrong input', 'red')
     }
@@ -76,7 +77,7 @@ const App = () => {
 
     try {
       const returnedBlog = await blogService.update(blog)
-      setBlogs(blogs.map(item => item.id === blog.id ? returnedBlog : item))
+      dispatch(likeBlog(returnedBlog.id))
     } catch (exception) {
       setNotificationMessage('Something went wrong', 'red')
     }
@@ -86,7 +87,7 @@ const App = () => {
 
     try {
       await blogService.remove(id)
-      setBlogs(blogs.filter(blog => blog.id !== id))
+      dispatch(removeBlog(id))
       setNotificationMessage('Blog was deleted successfully', 'green')
     } catch (exception) {
       setNotificationMessage('Something went wrong', 'red')
