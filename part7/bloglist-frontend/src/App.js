@@ -6,18 +6,20 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { setNotification, removeNotification } from './reducers/notificationReducer'
+import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState(null)
-  const [color, setColor] = useState('red')
+  const notification = useSelector(state => state.message)
+  const color = useSelector(state => state.color)
+  const dispatch = useDispatch()
 
   const setNotificationMessage = (message, color) => {
-    setColor(color)
-    setNotification(message)
+    dispatch(setNotification({ message, color }))
     setTimeout(() => {
-      setNotification(null)
+      dispatch(removeNotification())
     }, 5000)
   }
 
@@ -37,7 +39,6 @@ const App = () => {
   }, [])
 
   const logIn = async (credentials) => {
-
     try {
       const user = await loginService.login(credentials)
 
