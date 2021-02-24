@@ -8,14 +8,15 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification, removeNotification } from './reducers/notificationReducer'
 import { initializeBlogs, createBlog, removeBlog, likeBlog } from './reducers/blogReducer'
+import { setUser } from './reducers/userReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
-  const [user, setUser] = useState(null)
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.user)
   const blogs = useSelector(state => state.blogs)
   const notification = useSelector(state => state.notification.message)
   const color = useSelector(state => state.notification.color)
-  const dispatch = useDispatch()
 
   const setNotificationMessage = (message, color) => {
     dispatch(setNotification({ message, color }))
@@ -34,7 +35,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
   }, [])
@@ -47,7 +48,7 @@ const App = () => {
         'loggedBlogappUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setUser(user))
       setNotificationMessage(`Hello ${user.name}!`, 'green')
     } catch (exception) {
       setNotificationMessage('Wrong credentials', 'red')
@@ -59,7 +60,7 @@ const App = () => {
 
     window.localStorage.removeItem('loggedBlogappUser')
     blogService.setToken(null)
-    setUser(null)
+    dispatch(setUser(null))
   }
 
   const addBlog = async (blog) => {
