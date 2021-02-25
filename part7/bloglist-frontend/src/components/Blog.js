@@ -1,21 +1,11 @@
-import React, { useState } from 'react'
-const Blog = ({ blog, addLike, deleteBlog, isCreator }) => {
-  const [visible, setVisible] = useState(false)
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
-  const hiddenPartStyle = {
-    display: visible ? '' : 'none'
+import React from 'react'
+const Blog = ({ blog, addLike, deleteBlog, username }) => {
+  if (!blog) {
+    return null
   }
 
   const removeButton = {
-    display: isCreator ? '' : 'none'
+    display: blog.user.username === username ? '' : 'none'
   }
 
   const handleLike = (event) => {
@@ -33,15 +23,15 @@ const Blog = ({ blog, addLike, deleteBlog, isCreator }) => {
     }
   }
 
+  console.log(blog.user)
+
   return (
-    <div style={blogStyle} className='blog'>
+    <div className='blog'>
       <div>
-        {blog.title} {blog.author} <button onClick={() => { setVisible(!visible) }}>{visible ? 'hide' : 'view'}</button>
-      </div>
-      <div style={hiddenPartStyle} className="togglableContent">
+        <h2>{blog.title} {blog.author}</h2>
         {blog.url} <br />
         {blog.likes} <button onClick={handleLike}>like</button> <br />
-        {blog.user ? blog.user.name : null} <br />
+        added by {blog.user.name ? blog.user.name : 'Unknown'} <br />
         <button style={removeButton} onClick={handleDelete}>remove</button>
       </div>
     </div>

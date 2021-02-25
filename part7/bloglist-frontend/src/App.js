@@ -9,8 +9,9 @@ import { initializeBlogs, createBlog, removeBlog, likeBlog } from './reducers/bl
 import { setUser, logInUser, logOutUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/personReducer'
 import { useSelector, useDispatch } from 'react-redux'
-import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
+import { Switch, Route, Link, useRouteMatch, useHistory } from 'react-router-dom'
 import User from './components/User'
+import Blog from './components/Blog'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -19,6 +20,7 @@ const App = () => {
   const blogs = useSelector(state => state.blogs)
   const notification = useSelector(state => state.notification.message)
   const color = useSelector(state => state.notification.color)
+  const history = useHistory()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -49,11 +51,17 @@ const App = () => {
 
   const deleteBlog = (id) => {
     dispatch(removeBlog(id))
+    history.push('/')
   }
 
   const matchUser = useRouteMatch('/users/:id')
   const showUser = matchUser
     ? users.find(user => user.id === matchUser.params.id)
+    : null
+
+  const matchBlog = useRouteMatch('/blogs/:id')
+  const showBlog = matchBlog
+    ? blogs.find(blog => blog.id === matchBlog.params.id)
     : null
 
   return (
@@ -69,6 +77,14 @@ const App = () => {
               <button onClick={handleLogout}>logout</button>
             </p>
             <Switch>
+              <Route path='/blogs/:id'>
+                <Blog
+                  blog={showBlog}
+                  addLike={addLike}
+                  deleteBlog={deleteBlog}
+                  username={user.username}
+                />
+              </Route>
               <Route path='/users/:id'>
                 <User user={showUser} />
               </Route>
@@ -76,15 +92,10 @@ const App = () => {
                 <UserList users={users} />
               </Route>
               <Route path='/'>
-                <Togglable buttonLabel1='new blog' buttonLabel2='cancel'>
+                <Togglable buttonLabel1='create new' buttonLabel2='cancel'>
                   <BlogForm addBlog={addBlog} />
                 </Togglable>
-                <BlogList
-                  blogs={blogs}
-                  addLike={addLike}
-                  deleteBlog={deleteBlog}
-                  username={user.username}
-                />
+                <BlogList blogs={blogs} />
               </Route>
             </Switch>
           </div>
