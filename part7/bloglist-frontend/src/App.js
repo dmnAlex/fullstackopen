@@ -4,10 +4,13 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import UserList from './components/UserList'
 import { initializeBlogs, createBlog, removeBlog, likeBlog } from './reducers/blogReducer'
 import { setUser, logInUser, logOutUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/personReducer'
 import { useSelector, useDispatch } from 'react-redux'
+import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
+import User from './components/User'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -48,29 +51,45 @@ const App = () => {
     dispatch(removeBlog(id))
   }
 
+  const matchUser = useRouteMatch('/users/:id')
+  const showUser = matchUser
+    ? users.find(user => user.id === matchUser.params.id)
+    : null
+
   return (
     <div>
       <Notification message={notification} color={color} />
       {
-        user !== null
-          ? <div>
+        user === null
+          ? <LoginForm logIn={logIn} />
+          : <div>
             <h2>blogs</h2>
             <p>
               {user.name} logged-in
               <button onClick={handleLogout}>logout</button>
             </p>
-            <Togglable buttonLabel1='new blog' buttonLabel2='cancel'>
-              <BlogForm addBlog={addBlog} />
-            </Togglable>
-            <BlogList
-              blogs={blogs}
-              addLike={addLike}
-              deleteBlog={deleteBlog}
-              username={user.username}
-            />
+            <Switch>
+              <Route path='/users/:id'>
+                <User user={showUser} />
+              </Route>
+              <Route path='/users'>
+                <UserList users={users} />
+              </Route>
+              <Route path='/'>
+                <Togglable buttonLabel1='new blog' buttonLabel2='cancel'>
+                  <BlogForm addBlog={addBlog} />
+                </Togglable>
+                <BlogList
+                  blogs={blogs}
+                  addLike={addLike}
+                  deleteBlog={deleteBlog}
+                  username={user.username}
+                />
+              </Route>
+            </Switch>
           </div>
-          : <LoginForm logIn={logIn} />
       }
+
     </div>
   )
 }
