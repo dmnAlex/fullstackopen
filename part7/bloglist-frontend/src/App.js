@@ -9,9 +9,10 @@ import { initializeBlogs, createBlog, removeBlog, likeBlog } from './reducers/bl
 import { setUser, logInUser, logOutUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/personReducer'
 import { useSelector, useDispatch } from 'react-redux'
-import { Switch, Route, Link, useRouteMatch, useHistory } from 'react-router-dom'
+import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom'
 import User from './components/User'
 import Blog from './components/Blog'
+import NavBar from './components/NavBar'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -71,11 +72,7 @@ const App = () => {
         user === null
           ? <LoginForm logIn={logIn} />
           : <div>
-            <h2>blogs</h2>
-            <p>
-              {user.name} logged-in
-              <button onClick={handleLogout}>logout</button>
-            </p>
+            <NavBar name={user.name} handleLogout={handleLogout} />
             <Switch>
               <Route path='/blogs/:id'>
                 <Blog
