@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react'
-import Blog from './components/Blog'
+import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { initializeBlogs, createBlog, removeBlog, likeBlog } from './reducers/blogReducer'
 import { setUser, logInUser, logOutUser } from './reducers/userReducer'
+import { initializeUsers } from './reducers/personReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
+  const users = useSelector(state => state.users)
   const blogs = useSelector(state => state.blogs)
   const notification = useSelector(state => state.notification.message)
   const color = useSelector(state => state.notification.color)
@@ -22,9 +24,10 @@ const App = () => {
       dispatch(setUser(user))
     }
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   }, [dispatch])
 
-  const logIn = async (credentials) => {
+  const logIn = (credentials) => {
     dispatch(logInUser(credentials))
   }
 
@@ -33,15 +36,15 @@ const App = () => {
     dispatch(logOutUser())
   }
 
-  const addBlog = async (blog) => {
+  const addBlog = (blog) => {
     dispatch(createBlog(blog))
   }
 
-  const addLike = async (blog) => {
+  const addLike = (blog) => {
     dispatch(likeBlog(blog))
   }
 
-  const deleteBlog = async (id) => {
+  const deleteBlog = (id) => {
     dispatch(removeBlog(id))
   }
 
@@ -49,8 +52,8 @@ const App = () => {
     <div>
       <Notification message={notification} color={color} />
       {
-        user !== null ?
-          (<div>
+        user !== null
+          ? <div>
             <h2>blogs</h2>
             <p>
               {user.name} logged-in
@@ -59,17 +62,14 @@ const App = () => {
             <Togglable buttonLabel1='new blog' buttonLabel2='cancel'>
               <BlogForm addBlog={addBlog} />
             </Togglable>
-            {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-              <Blog
-                key={blog.id}
-                blog={blog}
-                addLike={addLike}
-                deleteBlog={deleteBlog}
-                isCreator={blog.user && blog.user.username === user.username}
-              />
-            )}
-          </div>)
-          : (<LoginForm logIn={logIn} />)
+            <BlogList
+              blogs={blogs}
+              addLike={addLike}
+              deleteBlog={deleteBlog}
+              username={user.username}
+            />
+          </div>
+          : <LoginForm logIn={logIn} />
       }
     </div>
   )
