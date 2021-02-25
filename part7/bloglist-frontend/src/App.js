@@ -4,7 +4,6 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { showNotification } from './reducers/notificationReducer'
 import { initializeBlogs, createBlog, removeBlog, likeBlog } from './reducers/blogReducer'
 import { setUser, logInUser, logOutUser } from './reducers/userReducer'
 import { useSelector, useDispatch } from 'react-redux'
@@ -16,36 +15,17 @@ const App = () => {
   const notification = useSelector(state => state.notification.message)
   const color = useSelector(state => state.notification.color)
 
-  // const setNotificationMessage = (message, color) => {
-  //   dispatch(setNotification({ message, color }))
-  //   setTimeout(() => {
-  //     dispatch(removeNotification())
-  //   }, 5000)
-  // }
-
-  const setNotificationMessage = (message, color) => {
-    dispatch(showNotification({ message, color }))
-  }
-
-  useEffect(() => {
-    dispatch(initializeBlogs())
-  }, [dispatch])
-
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       dispatch(setUser(user))
     }
+    dispatch(initializeBlogs())
   }, [dispatch])
 
   const logIn = async (credentials) => {
-    try {
-      dispatch(logInUser(credentials))
-      setNotificationMessage(`Hello ${user.name}!`, 'green')
-    } catch (exception) {
-      setNotificationMessage('Wrong credentials', 'red')
-    }
+    dispatch(logInUser(credentials))
   }
 
   const handleLogout = (event) => {
@@ -54,29 +34,15 @@ const App = () => {
   }
 
   const addBlog = async (blog) => {
-    try {
-      dispatch(createBlog(blog))
-      setNotificationMessage('Blog added successfully', 'green')
-    } catch (exception) {
-      setNotificationMessage('Wrong input', 'red')
-    }
+    dispatch(createBlog(blog))
   }
 
   const addLike = async (blog) => {
-    try {
-      dispatch(likeBlog(blog))
-    } catch (exception) {
-      setNotificationMessage('Something went wrong', 'red')
-    }
+    dispatch(likeBlog(blog))
   }
 
   const deleteBlog = async (id) => {
-    try {
-      dispatch(removeBlog(id))
-      setNotificationMessage('Blog was deleted successfully', 'green')
-    } catch (exception) {
-      setNotificationMessage('Something went wrong', 'red')
-    }
+    dispatch(removeBlog(id))
   }
 
   return (

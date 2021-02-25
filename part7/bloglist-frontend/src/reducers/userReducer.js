@@ -1,5 +1,6 @@
 import blogService from '../services/blogs'
 import loginService from '../services/login'
+import { showNotification } from './notificationReducer'
 
 const userReducer = (state = null, action) => {
   switch (action.type) {
@@ -22,15 +23,20 @@ export const setUser = (user) => {
 
 export const logInUser = (credentials) => {
   return async dispatch => {
-    const user = await loginService.login(credentials)
-    blogService.setToken(user.token)
-    window.localStorage.setItem(
-      'loggedBlogappUser', JSON.stringify(user)
-    )
-    dispatch({
-      type: 'SET_USER',
-      data: user
-    })
+    try {
+      const user = await loginService.login(credentials)
+      blogService.setToken(user.token)
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
+      dispatch({
+        type: 'SET_USER',
+        data: user
+      })
+      dispatch(showNotification(`Hello ${user.name}!`, 'green'))
+    } catch (exception) {
+      dispatch(showNotification('Wrong credentials', 'red'))
+    }
   }
 
 }

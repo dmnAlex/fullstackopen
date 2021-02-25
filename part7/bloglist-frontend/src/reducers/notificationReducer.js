@@ -25,7 +25,7 @@ export const removeNotification = () => {
   }
 }
 
-export const showNotification = ({ message, color }) => {
+export const showNotification = (message, color) => {
   return dispatch => {
     dispatch({
       type: 'SET_NOTIFICAION',

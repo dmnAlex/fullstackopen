@@ -25,11 +25,16 @@ const blogReducer = (state = [], action) => {
 
 export const createBlog = (blog) => {
   return async dispatch => {
-    const returnedBlog = await blogService.create(blog)
-    dispatch({
-      type: 'NEW_BLOG',
-      data: returnedBlog
-    })
+    try {
+      const returnedBlog = await blogService.create(blog)
+      dispatch({
+        type: 'NEW_BLOG',
+        data: returnedBlog
+      })
+      dispatch(showNotification('Blog added successfully', 'green'))
+    } catch (exception) {
+      dispatch(showNotification('Wrong input', 'red'))
+    }
   }
 }
 
@@ -45,26 +50,35 @@ export const initializeBlogs = () => {
 
 export const removeBlog = (id) => {
   return async dispatch => {
-    await blogService.remove(id)
-    dispatch({
-      type: 'REMOVE_BLOG',
-      data: {
-        id
-      }
-    })
+    try {
+      await blogService.remove(id)
+      dispatch({
+        type: 'REMOVE_BLOG',
+        data: {
+          id
+        }
+      })
+      dispatch(showNotification('Blog was deleted successfully', 'green'))
+    } catch (exception) {
+      dispatch(showNotification('Something went wrong', 'red'))
+    }
   }
 }
 
 export const likeBlog = (blog) => {
   return async dispatch => {
-    const returnedBlog = await blogService.update(blog)
-    const id = returnedBlog.id
-    dispatch({
-      type: 'LIKE_BLOG',
-      data: {
-        id
-      }
-    })
+    try {
+      const returnedBlog = await blogService.update(blog)
+      const id = returnedBlog.id
+      dispatch({
+        type: 'LIKE_BLOG',
+        data: {
+          id
+        }
+      })
+    } catch (exception) {
+      dispatch(showNotification('Something went wrong', 'red'))
+    }
   }
 }
 
