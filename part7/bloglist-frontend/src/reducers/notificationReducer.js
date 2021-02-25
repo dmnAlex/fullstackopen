@@ -25,8 +25,10 @@ export const removeNotification = () => {
   }
 }
 
+let timeoutId
+
 export const showNotification = (message, color) => {
-  return dispatch => {
+  return async dispatch => {
     dispatch({
       type: 'SET_NOTIFICAION',
       data: {
@@ -34,7 +36,12 @@ export const showNotification = (message, color) => {
         color
       }
     })
-    setTimeout(() => {
+
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+
+    timeoutId = setTimeout(() => {
       dispatch({
         type: 'REMOVE_NOTIFICAION'
       })
