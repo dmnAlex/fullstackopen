@@ -25,4 +25,21 @@ export const removeNotification = () => {
   }
 }
 
+export const showNotification = ({ message, color }) => {
+  return dispatch => {
+    dispatch({
+      type: 'SET_NOTIFICAION',
+      data: {
+        message,
+        color
+      }
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'REMOVE_NOTIFICAION'
+      })
+    }, 5000)
+  }
+}
+
 export default notificationReducer

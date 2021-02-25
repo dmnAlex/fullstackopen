@@ -1,3 +1,6 @@
+import blogService from '../services/blogs'
+import { showNotification } from './notificationReducer'
+
 const blogReducer = (state = [], action) => {
   switch (action.type) {
     case 'NEW_BLOG':
@@ -21,34 +24,47 @@ const blogReducer = (state = [], action) => {
 }
 
 export const createBlog = (blog) => {
-  return {
-    type: 'NEW_BLOG',
-    data: blog
+  return async dispatch => {
+    const returnedBlog = await blogService.create(blog)
+    dispatch({
+      type: 'NEW_BLOG',
+      data: returnedBlog
+    })
   }
 }
 
-export const initializeBlogs = (blogs) => {
-  return {
-    type: 'INIT_BLOGS',
-    data: blogs
+export const initializeBlogs = () => {
+  return async dispatch => {
+    const blogs = await blogService.getAll()
+    dispatch({
+      type: 'INIT_BLOGS',
+      data: blogs
+    })
   }
 }
 
 export const removeBlog = (id) => {
-  return {
-    type: 'REMOVE_BLOG',
-    data: {
-      id
-    }
+  return async dispatch => {
+    await blogService.remove(id)
+    dispatch({
+      type: 'REMOVE_BLOG',
+      data: {
+        id
+      }
+    })
   }
 }
 
-export const likeBlog = (id) => {
-  return {
-    type: 'LIKE_BLOG',
-    data: {
-      id
-    }
+export const likeBlog = (blog) => {
+  return async dispatch => {
+    const returnedBlog = await blogService.update(blog)
+    const id = returnedBlog.id
+    dispatch({
+      type: 'LIKE_BLOG',
+      data: {
+        id
+      }
+    })
   }
 }
 

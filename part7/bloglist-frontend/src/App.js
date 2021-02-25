@@ -4,11 +4,9 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import blogService from './services/blogs'
-import loginService from './services/login'
-import { setNotification, removeNotification } from './reducers/notificationReducer'
+import { showNotification } from './reducers/notificationReducer'
 import { initializeBlogs, createBlog, removeBlog, likeBlog } from './reducers/blogReducer'
-import { setUser } from './reducers/userReducer'
+import { setUser, logInUser, logOutUser } from './reducers/userReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
@@ -18,17 +16,19 @@ const App = () => {
   const notification = useSelector(state => state.notification.message)
   const color = useSelector(state => state.notification.color)
 
+  // const setNotificationMessage = (message, color) => {
+  //   dispatch(setNotification({ message, color }))
+  //   setTimeout(() => {
+  //     dispatch(removeNotification())
+  //   }, 5000)
+  // }
+
   const setNotificationMessage = (message, color) => {
-    dispatch(setNotification({ message, color }))
-    setTimeout(() => {
-      dispatch(removeNotification())
-    }, 5000)
+    dispatch(showNotification({ message, color }))
   }
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      dispatch(initializeBlogs(blogs))
-    )
+    dispatch(initializeBlogs())
   }, [dispatch])
 
   useEffect(() => {
@@ -36,19 +36,12 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       dispatch(setUser(user))
-      blogService.setToken(user.token)
     }
   }, [dispatch])
 
   const logIn = async (credentials) => {
     try {
-      const user = await loginService.login(credentials)
-
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      )
-      blogService.setToken(user.token)
-      dispatch(setUser(user))
+      dispatch(logInUser(credentials))
       setNotificationMessage(`Hello ${user.name}!`, 'green')
     } catch (exception) {
       setNotificationMessage('Wrong credentials', 'red')
@@ -57,37 +50,28 @@ const App = () => {
 
   const handleLogout = (event) => {
     event.preventDefault()
-
-    window.localStorage.removeItem('loggedBlogappUser')
-    blogService.setToken(null)
-    dispatch(setUser(null))
+    dispatch(logOutUser())
   }
 
   const addBlog = async (blog) => {
-
     try {
-      const returnedBlog = await blogService.create(blog)
+      dispatch(createBlog(blog))
       setNotificationMessage('Blog added successfully', 'green')
-      dispatch(createBlog(returnedBlog))
     } catch (exception) {
       setNotificationMessage('Wrong input', 'red')
     }
   }
 
   const addLike = async (blog) => {
-
     try {
-      const returnedBlog = await blogService.update(blog)
-      dispatch(likeBlog(returnedBlog.id))
+      dispatch(likeBlog(blog))
     } catch (exception) {
       setNotificationMessage('Something went wrong', 'red')
     }
   }
 
   const deleteBlog = async (id) => {
-
     try {
-      await blogService.remove(id)
       dispatch(removeBlog(id))
       setNotificationMessage('Blog was deleted successfully', 'green')
     } catch (exception) {
