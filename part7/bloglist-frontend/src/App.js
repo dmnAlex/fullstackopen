@@ -5,11 +5,11 @@ import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import UserList from './components/UserList'
-import { initializeBlogs, createBlog, removeBlog, likeBlog } from './reducers/blogReducer'
-import { setUser, logInUser, logOutUser } from './reducers/userReducer'
+import { initializeBlogs } from './reducers/blogReducer'
+import { setUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/personReducer'
 import { useSelector, useDispatch } from 'react-redux'
-import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom'
+import { Switch, Route, useRouteMatch } from 'react-router-dom'
 import User from './components/User'
 import Blog from './components/Blog'
 import NavBar from './components/NavBar'
@@ -21,7 +21,6 @@ const App = () => {
   const blogs = useSelector(state => state.blogs)
   const notification = useSelector(state => state.notification.message)
   const color = useSelector(state => state.notification.color)
-  const history = useHistory()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -32,28 +31,6 @@ const App = () => {
     dispatch(initializeBlogs())
     dispatch(initializeUsers())
   }, [dispatch])
-
-  const logIn = (credentials) => {
-    dispatch(logInUser(credentials))
-  }
-
-  const handleLogout = (event) => {
-    event.preventDefault()
-    dispatch(logOutUser())
-  }
-
-  const addBlog = (blog) => {
-    dispatch(createBlog(blog))
-  }
-
-  const addLike = (blog) => {
-    dispatch(likeBlog(blog))
-  }
-
-  const deleteBlog = (id) => {
-    dispatch(removeBlog(id))
-    history.push('/')
-  }
 
   const matchUser = useRouteMatch('/users/:id')
   const showUser = matchUser
@@ -70,15 +47,13 @@ const App = () => {
       <Notification message={notification} color={color} />
       {
         user === null
-          ? <LoginForm logIn={logIn} />
+          ? <LoginForm />
           : <div>
-            <NavBar name={user.name} handleLogout={handleLogout} />
+            <NavBar name={user.name} />
             <Switch>
               <Route path='/blogs/:id'>
                 <Blog
                   blog={showBlog}
-                  addLike={addLike}
-                  deleteBlog={deleteBlog}
                   username={user.username}
                 />
               </Route>
@@ -90,7 +65,7 @@ const App = () => {
               </Route>
               <Route path='/'>
                 <Togglable buttonLabel1='create new' buttonLabel2='cancel'>
-                  <BlogForm addBlog={addBlog} />
+                  <BlogForm />
                 </Togglable>
                 <BlogList blogs={blogs} />
               </Route>

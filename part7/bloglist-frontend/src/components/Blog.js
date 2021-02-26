@@ -1,5 +1,11 @@
 import React from 'react'
-const Blog = ({ blog, addLike, deleteBlog, username }) => {
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { likeBlog, removeBlog } from '../reducers/blogReducer'
+const Blog = ({ blog, username }) => {
+  const history = useHistory()
+  const dispatch = useDispatch()
+
   if (!blog) {
     return null
   }
@@ -12,18 +18,17 @@ const Blog = ({ blog, addLike, deleteBlog, username }) => {
     event.preventDefault()
 
     const newObject = { ...blog, likes: blog.likes + 1 }
-    addLike(newObject)
+    dispatch(likeBlog(newObject))
   }
 
   const handleDelete = (event) => {
     event.preventDefault()
 
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      deleteBlog(blog.id)
+      dispatch(removeBlog(blog.id))
+      history.push('/')
     }
   }
-
-  console.log(blog.user)
 
   return (
     <div className='blog'>

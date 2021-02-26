@@ -1,7 +1,11 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { logOutUser } from '../reducers/userReducer'
 
-const NavBar = ({ name, handleLogout }) => {
+const NavBar = ({ name }) => {
+  const dispatch = useDispatch()
+
   const padding = {
     padding: 5
   }
@@ -9,6 +13,11 @@ const NavBar = ({ name, handleLogout }) => {
   const navBar = {
     backgroundColor: 'LightGray',
     padding: 5
+  }
+
+  const handleLogout = (event) => {
+    event.preventDefault()
+    dispatch(logOutUser())
   }
 
   return (
