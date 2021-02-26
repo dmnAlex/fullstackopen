@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import {
+  commentBlog,
+  likeBlog,
+  removeBlog
+} from '../reducers/blogReducer'
 const Blog = ({ blog, username }) => {
+  const [comment, setComment] = useState('')
   const history = useHistory()
   const dispatch = useDispatch()
 
@@ -17,8 +22,16 @@ const Blog = ({ blog, username }) => {
   const handleLike = (event) => {
     event.preventDefault()
 
-    const newObject = { ...blog, likes: blog.likes + 1 }
-    dispatch(likeBlog(newObject))
+    const newBlog = { ...blog, likes: blog.likes + 1 }
+    dispatch(likeBlog(newBlog))
+  }
+
+  const handleComment = (event) => {
+    event.preventDefault()
+
+    const newBlog = { ...blog, comments: [...blog.comments, comment] }
+    dispatch(commentBlog(newBlog))
+    setComment('')
   }
 
   const handleDelete = (event) => {
@@ -38,6 +51,22 @@ const Blog = ({ blog, username }) => {
         {blog.likes} <button onClick={handleLike}>like</button> <br />
         added by {blog.user.name ? blog.user.name : 'Unknown'} <br />
         <button style={removeButton} onClick={handleDelete}>remove</button>
+        <h3>comments</h3>
+        <form onSubmit={handleComment}>
+          <input
+            id='comment'
+            type='text'
+            value={comment}
+            name='Comment'
+            onChange={({ target }) => setComment(target.value)}
+          />
+          <button id='login-button' type='submit'>add comment</button>
+        </form>
+        <ul>
+          {blog.comments.map((comment, index) =>
+            <li key={index}>{comment}</li>)
+          }
+        </ul>
       </div>
     </div>
   )

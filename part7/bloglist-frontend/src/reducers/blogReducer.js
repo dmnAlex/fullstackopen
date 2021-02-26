@@ -18,6 +18,16 @@ const blogReducer = (state = [], action) => {
       }
       return state.map(blog => blog.id !== id ? blog : changedBlog)
     }
+    case 'COMMENT_BLOG': {
+      const id = action.data.id
+      const comments = action.data.comments
+      const blogToChange = state.find(blog => blog.id === id)
+      const changedBlog = {
+        ...blogToChange,
+        comments: comments
+      }
+      return state.map(blog => blog.id !== id ? blog : changedBlog)
+    }
     default:
       return state
   }
@@ -74,6 +84,25 @@ export const likeBlog = (blog) => {
         type: 'LIKE_BLOG',
         data: {
           id
+        }
+      })
+    } catch (exception) {
+      dispatch(showNotification('Something went wrong', 'red'))
+    }
+  }
+}
+
+export const commentBlog = (blog) => {
+  return async dispatch => {
+    try {
+      const returnedBlog = await blogService.update(blog)
+      const id = returnedBlog.id
+      const comments = returnedBlog.comments
+      dispatch({
+        type: 'COMMENT_BLOG',
+        data: {
+          id,
+          comments
         }
       })
     } catch (exception) {
