@@ -1,4 +1,4 @@
-const notificationReducer = (state = { message: null, color: 'black' }, action) => {
+const notificationReducer = (state = { message: null, severity: 'info' }, action) => {
   switch (action.type) {
     case 'SET_NOTIFICAION':
       return action.data
@@ -9,12 +9,12 @@ const notificationReducer = (state = { message: null, color: 'black' }, action) 
   }
 }
 
-export const setNotification = ({ message, color }) => {
+export const setNotification = ({ message, severity }) => {
   return {
     type: 'SET_NOTIFICAION',
     data: {
       message,
-      color
+      severity
     }
   }
 }
@@ -27,13 +27,13 @@ export const removeNotification = () => {
 
 let timeoutId
 
-export const showNotification = (message, color) => {
+export const showNotification = (message, severity) => {
   return async dispatch => {
     dispatch({
       type: 'SET_NOTIFICAION',
       data: {
         message,
-        color
+        severity
       }
     })
 

@@ -41,9 +41,9 @@ export const createBlog = (blog) => {
         type: 'NEW_BLOG',
         data: returnedBlog
       })
-      dispatch(showNotification('Blog added successfully', 'green'))
+      dispatch(showNotification('Blog added successfully', 'success'))
     } catch (exception) {
-      dispatch(showNotification('Wrong input', 'red'))
+      dispatch(showNotification('Wrong input', 'error'))
     }
   }
 }
@@ -68,9 +68,9 @@ export const removeBlog = (id) => {
           id
         }
       })
-      dispatch(showNotification('Blog was deleted successfully', 'green'))
+      dispatch(showNotification('Blog was deleted successfully', 'success'))
     } catch (exception) {
-      dispatch(showNotification('Something went wrong', 'red'))
+      dispatch(showNotification('Something went wrong', 'error'))
     }
   }
 }
@@ -87,7 +87,7 @@ export const likeBlog = (blog) => {
         }
       })
     } catch (exception) {
-      dispatch(showNotification('Something went wrong', 'red'))
+      dispatch(showNotification('Something went wrong', 'error'))
     }
   }
 }
@@ -106,7 +106,7 @@ export const commentBlog = (blog) => {
         }
       })
     } catch (exception) {
-      dispatch(showNotification('Something went wrong', 'red'))
+      dispatch(showNotification('Something went wrong', 'error'))
     }
   }
 }

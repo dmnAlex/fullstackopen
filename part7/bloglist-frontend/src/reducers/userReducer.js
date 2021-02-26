@@ -33,9 +33,9 @@ export const logInUser = (credentials) => {
         type: 'SET_USER',
         data: user
       })
-      dispatch(showNotification(`Hello ${user.name}!`, 'green'))
+      dispatch(showNotification(`Hello ${user.name}!`, 'info'))
     } catch (exception) {
-      dispatch(showNotification('Wrong credentials', 'red'))
+      dispatch(showNotification('Wrong credentials', 'error'))
     }
   }
 

@@ -13,6 +13,7 @@ import { Switch, Route, useRouteMatch } from 'react-router-dom'
 import User from './components/User'
 import Blog from './components/Blog'
 import NavBar from './components/NavBar'
+import Container from '@material-ui/core/Container'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -20,7 +21,7 @@ const App = () => {
   const users = useSelector(state => state.users)
   const blogs = useSelector(state => state.blogs)
   const notification = useSelector(state => state.notification.message)
-  const color = useSelector(state => state.notification.color)
+  const severity = useSelector(state => state.notification.severity)
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -43,8 +44,8 @@ const App = () => {
     : null
 
   return (
-    <div>
-      <Notification message={notification} color={color} />
+    <Container>
+      <Notification message={notification} severity={severity} />
       {
         user === null
           ? <LoginForm />
@@ -72,8 +73,7 @@ const App = () => {
             </Switch>
           </div>
       }
-
-    </div>
+    </Container>
   )
 }
 

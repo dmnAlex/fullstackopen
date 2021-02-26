@@ -1,21 +1,13 @@
 import React from 'react'
+import { Alert } from '@material-ui/lab'
 
-const Notification = ({ message, color }) => {
-  const divStyle = {
-    color: color,
-    fontSize: '20px',
-    borderStyle: 'solid',
-    borderRadius: '5px',
-    padding: '10px',
-    marginBottom: '10px'
-  }
-
+const Notification = ({ message, severity }) => {
   return message === null
     ? null
     : (
-      <div className="error" style={divStyle}>
+      <Alert severity={severity}>
         {message}
-      </div>
+      </Alert>
     )
 }
 
