@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { v1: uuid } = require('uuid')
 
 let authors = [
   {
@@ -84,13 +85,83 @@ let books = [
 ]
 
 const typeDefs = gql`
+  type Book {
+    title: String!
+    published: Int!
+    author: String!
+    genres: [String!]!
+    id: ID!
+  }
+
+  type Author {
+    name: String!
+    born: Int
+    bookCount: Int!
+    id: ID!
+  }
+
   type Query {
+    bookCount: Int!
+    authorCount: Int!
+    allBooks(author: String, genre: String): [Book!]!
+    allAuthors: [Author!]!
+  }
+
+  type Mutation {
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]!
+    ): Book
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `
 
 const resolvers = {
   Query: {
+    bookCount: () => books.length,
+    authorCount: () => authors.length,
+    allBooks: (root, args) => {
+      let result = books
+      if (args.author) {
+        result = result.filter(book => book.author === args.author)
+      }
+      if (args.genre) {
+        result = result.filter(book => book.genres.includes(args.genre))
+      }
+      return result
+    },
+    allAuthors: () => authors
+  },
+  Author: {
+    bookCount: (root) => books.reduce((a, c) =>
+      a + (c.author === root.name ? 1 : 0), 0)
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const book = { ...args, id: uuid() }
+      books = books.concat(book)
+      if (authors.every(author => author.name !== book.author)) {
+        const author = { name: book.author, id: uuid() }
+        authors = authors.concat(author)
+      }
+      return book
+    },
+    editAuthor: (root, args) => {
+      const author = authors.find(author => author.name === args.name)
+      if (!author) {
+        return null
+      }
+
+      const updatedAuthor = { ...author, born: args.setBornTo }
+      authors = authors.map(item => item.name === args.name
+        ? updatedAuthor
+        : item)
+      return updatedAuthor
+    }
   }
+
 }
 
 const server = new ApolloServer({
