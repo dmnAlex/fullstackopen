@@ -111,7 +111,7 @@ const resolvers = {
         throw new UserInputError(error.message, { invalidArgs: args })
       }
 
-      return book
+      return book.populate('author').execPopulate()
     },
     editAuthor: async (root, args, { currentUser }) => {
       if (!currentUser) {
