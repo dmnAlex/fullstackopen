@@ -45,7 +45,7 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String, genre: String): [Book!]!
+    allBooks(genre: String): [Book!]!
     allAuthors: [Author!]!
     me: User
   }
@@ -140,7 +140,7 @@ const resolvers = {
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username })
 
-      if (!user || args.password !== 'secred') {
+      if (!user || args.password !== 'secret') {
         throw new UserInputError('wrong credentials')
       }
 
