@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const Book = require('./models/book')
 const Author = require('./models/author')
 const User = require('./models/user')
+const DataLoader = require('dataloader')
 require('dotenv').config()
 
 console.log('connectiong to', process.env.MONGODB_URI)
@@ -92,7 +93,7 @@ const resolvers = {
     }
   },
   Author: {
-    bookCount: (root) => Book.find({ author: { _id: root.id } }).countDocuments()
+    bookCount: (root, _args, { bookLoader }) => bookLoader.load(root.id)
   },
   Mutation: {
     addBook: async (root, args, { currentUser }) => {
@@ -168,6 +169,17 @@ const resolvers = {
   }
 }
 
+const batchBooks = async (authorIds) => {
+  const books = await Book.find({ author: { $in: authorIds } })
+  const booksToAuthorId = books.map(book => book.author.toString())
+  return authorIds.map(id => 
+    booksToAuthorId
+      .filter(item => item === id)
+      .length)
+}
+
+const bookLoader = new DataLoader(batchBooks)
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -178,7 +190,7 @@ const server = new ApolloServer({
         auth.substring(7), process.env.JWT_SECRET
       )
       const currentUser = await User.findById(decodedToken.id)
-      return { currentUser }
+      return { currentUser, bookLoader }
     }
   }
 })
