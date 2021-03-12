@@ -1,5 +1,5 @@
 
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 import { useLazyQuery } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
 import Authors from './components/Authors'
@@ -7,14 +7,14 @@ import Books from './components/Books'
 import Login from './components/Login'
 import NewBook from './components/NewBook'
 import Recommendations from './components/Recommendations'
-import { USER } from './queries'
+import { BOOK_ADDED, USER } from './queries'
 
 const App = () => {
   const [token, setToken] = useState(null)
   const [user, setUser] = useState(null)
   const [page, setPage] = useState('authors')
-  const [getUser, resultUser] = useLazyQuery(USER, { 
-    fetchPolicy: 'no-cache' 
+  const [getUser, resultUser] = useLazyQuery(USER, {
+    fetchPolicy: 'no-cache'
   })
   const client = useApolloClient()
 
@@ -38,6 +38,14 @@ const App = () => {
     client.resetStore()
     setPage('authors')
   }
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      window.alert(
+        `Book with title "${subscriptionData.data.bookAdded.title}" was added`
+      )
+    }
+  })
 
   return (
     <div>
