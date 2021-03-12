@@ -1,20 +1,49 @@
-import { useLazyQuery } from '@apollo/client'
+import { useApolloClient, useLazyQuery, useSubscription } from '@apollo/client'
 import React, { useEffect, useState } from 'react'
-import { BOOKS_BY_GENRE } from '../queries'
+import { BOOKS_BY_GENRE, BOOK_ADDED } from '../queries'
 
 const Books = (props) => {
-  const [getBooks, resultBooks] = useLazyQuery(BOOKS_BY_GENRE, {
-    fetchPolicy: 'no-cache'
-  })
-  const [selectedGenre, setSelectedGenre] = useState('')
+  const [getBooks, resultBooks] = useLazyQuery(BOOKS_BY_GENRE)
+  const [selectedGenre, setSelectedGenre] = useState(null)
+  const client = useApolloClient()
 
   useEffect(() => {
-    getBooks({
-      variables: selectedGenre
-        ? { genre: selectedGenre }
-        : null
+    getBooks({ variables: { genre: null } })
+  }, []) // eslint-disable-line
+
+  const updateCacheWith = (addedBook) => {
+    const includedIn = (set, object) =>
+      set.map(item => item.id).includes(object)
+
+    const dataInStore = client.readQuery({
+      query: BOOKS_BY_GENRE,
+      variables: { genre: null }
     })
-  }, [selectedGenre]) // eslint-disable-line
+    if (!includedIn(dataInStore.allBooks, addedBook)) {
+      client.writeQuery({
+        query: BOOKS_BY_GENRE,
+        data: { allBooks: dataInStore.allBooks.concat(addedBook) }
+      })
+    }
+  }
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedBook = subscriptionData.data.bookAdded
+      if (selectedGenre) {
+        resultBooks.refetch({ genre: selectedGenre })
+      } else {
+        updateCacheWith(addedBook)
+      }
+    }
+  })
+
+  const clickHandlerGenerator = (genre) => {
+    return () => {
+      setSelectedGenre(genre)
+      resultBooks.refetch({ genre })
+    }
+  }
 
   if (!props.show) {
     return null
@@ -53,11 +82,11 @@ const Books = (props) => {
         </tbody>
       </table>
       {genres.map((genre, i) =>
-        <button key={i} onClick={() => setSelectedGenre(genre)}>
+        <button key={i} onClick={clickHandlerGenerator(genre)}>
           {genre}
         </button>
       )}
-      <button onClick={() => setSelectedGenre('')}>all genres</button>
+      <button onClick={clickHandlerGenerator(null)}>all genres</button>
     </div>
   )
 }
