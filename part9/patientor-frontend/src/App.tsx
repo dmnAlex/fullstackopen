@@ -13,7 +13,6 @@ const App = () => {
   const [, dispatch] = useStateValue();
   React.useEffect(() => {
     void axios.get<void>(`${apiBaseUrl}/ping`);
-
     const fetchPatientList = async () => {
       try {
         const { data: patientListFromApi } = await axios.get<Patient[]>(
@@ -36,9 +35,9 @@ const App = () => {
             Home
           </Button>
           <Divider hidden />
+          <PatientListPage />
           <Switch>
             <Route path="/patients/:id">
-              <PatientListPage />
             </Route>
           </Switch>
         </Container>
