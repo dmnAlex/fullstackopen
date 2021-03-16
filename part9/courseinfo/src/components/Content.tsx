@@ -1,13 +1,13 @@
 import React from 'react';
-import { CoursePart, CourseParts } from '../types';
+import { CoursePart } from '../types';
+import Part from './Part';
 
-const Content = ({ parts }: CourseParts): JSX.Element => {
+const Content = ({ courseParts }: { courseParts: CoursePart[] }): JSX.Element => {
   return (
     <div>
-      {parts.map((part: CoursePart, index: number): JSX.Element =>
-        <p key={index}>
-          {part.name} {part.exerciseCount}
-        </p>)}
+      {courseParts.map((part: CoursePart, index: number): JSX.Element =>
+        <Part key={index} part={part} />
+      )}
     </div>
   );
 };
