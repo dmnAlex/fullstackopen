@@ -8,9 +8,14 @@ const getEntries = (): nonSensitivePatientEntries[] => {
   }));
 };
 
+const getPatient = (id: string): Patient | undefined => {
+  return patientData.find(patient => patient.id === id);
+};
+
 const addPatient = (entry: newPatientEntry): Patient => {
   const newPatientEntry = {
     id: uuid(),
+    entries: [],
     ...entry
   };
 
@@ -18,4 +23,4 @@ const addPatient = (entry: newPatientEntry): Patient => {
   return newPatientEntry;
 };
 
-export default { getEntries, addPatient };
+export default { getEntries, getPatient, addPatient };
