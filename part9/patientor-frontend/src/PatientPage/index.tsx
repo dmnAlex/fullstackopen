@@ -4,10 +4,11 @@ import { useParams } from 'react-router';
 import { Container, Icon } from 'semantic-ui-react';
 import { apiBaseUrl } from '../constants';
 import { updatePatient, useStateValue } from '../state';
-import { Patient, Entry } from '../types';
+import { Patient, Entry, GenderIcon } from '../types';
+import EntryDetails from './EntryDetails';
 
 const PatientPage = () => {
-  const [{ patients, diagnoses }, dispatch] = useStateValue();
+  const [{ patients }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string }>();
   const fetchPatient = async () => {
     try {
@@ -30,17 +31,12 @@ const PatientPage = () => {
   return (
     <div className="App">
       <Container>
-        <h2>{patient.name}<Icon name={patient.gender === 'male' ? 'mars' : 'venus'} /></h2>
+        <h2>{patient.name}<Icon name={GenderIcon[patient.gender]} /></h2>
         <p>{`snn: ${patient.ssn}`}</p>
         <p>{`occupation: ${patient.occupation}`}</p>
         <h3>entries</h3>
         {patient.entries.map((entry: Entry) => (
-          <div key={entry.id}>
-            {entry.date} <i>{entry.description}</i>
-            {!entry.diagnosisCodes ? null : <ul>{entry.diagnosisCodes.map((code: string, index: number) =>
-              (<li key={index}>{code} {diagnoses[code] ? diagnoses[code].name : null}</li>)
-            )}</ul>}
-          </div>
+          <EntryDetails key={entry.id} entry={entry} />
         ))}
       </Container>
     </div>

@@ -5,6 +5,24 @@ export enum HealthCheckRating {
   "CriticalRisk" = 3
 }
 
+export enum CardTypeIcon {
+  "HealthCheck" = "user doctor",
+  "OccupationalHealthcare" = "stethoscope",
+  "Hospital" = "hospital outline"
+}
+
+export enum Gender {
+  Male = "male",
+  Female = "female",
+  Other = "other"
+}
+
+export enum GenderIcon {
+  "male" = "mars",
+  "female" = "venus",
+  "other" = "other gender"
+}
+
 export interface Diagnose {
   code: string;
   name: string;
@@ -19,12 +37,12 @@ interface BaseEntry {
   diagnosisCodes?: Array<Diagnose['code']>;
 }
 
-interface HealthCheckEntry extends BaseEntry {
+export interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
   healthCheckRating: HealthCheckRating;
 }
 
-interface OccupationalHealthCareEntry extends BaseEntry {
+export interface OccupationalHealthCareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
   employerName: string;
   sickLeave?: {
@@ -33,7 +51,7 @@ interface OccupationalHealthCareEntry extends BaseEntry {
   };
 }
 
-interface HospitalEntry extends BaseEntry {
+export interface HospitalEntry extends BaseEntry {
   type: "Hospital";
   discharge: {
     date: string;
@@ -42,12 +60,6 @@ interface HospitalEntry extends BaseEntry {
 }
 
 export type Entry = HealthCheckEntry | OccupationalHealthCareEntry | HospitalEntry;
-
-export enum Gender {
-  Male = "male",
-  Female = "female",
-  Other = "other"
-}
 
 export interface Patient {
   id: string;
