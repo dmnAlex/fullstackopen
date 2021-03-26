@@ -41,16 +41,23 @@ interface TextProps extends FieldProps {
 export const TextField= ({
   field,
   label,
-  placeholder
-}: TextProps) => (
-  <Form.Field>
-    <label>{label}</label>
-    <Field placeholder={placeholder} {...field} />
-    <div style={{ color:'red' }}>
-      <ErrorMessage name={field.name} />
-    </div>
-  </Form.Field>
-);
+  placeholder,
+  // ...rest
+}: TextProps) => {
+  // console.log('field:', field);
+  // console.log('label:', label);
+  // console.log('placeholder:', placeholder);
+  // console.log('rest:', rest);
+  return (
+    <Form.Field>
+      <label>{label}</label>
+      <Field placeholder={placeholder} {...field} />
+      <div style={{ color:'red' }}>
+        <ErrorMessage name={field.name} />
+      </div>
+    </Form.Field>
+  );
+};
 
 /*
   for exercises 9.24.-
