@@ -11,6 +11,12 @@ export enum CardTypeIcon {
   "Hospital" = "hospital outline"
 }
 
+export enum CardType {
+  HealthCheck = "HealthCheck",
+  OccupationalHealthcare = "OccupationalHealthcare",
+  Hospital = "Hospital"
+}
+
 export enum Gender {
   Male = "male",
   Female = "female",
@@ -60,6 +66,10 @@ export interface HospitalEntry extends BaseEntry {
 }
 
 export type Entry = HealthCheckEntry | OccupationalHealthCareEntry | HospitalEntry;
+export type NewEntry = 
+  | Omit<HealthCheckEntry, 'id'>
+  | Omit<OccupationalHealthCareEntry, 'id'>
+  | Omit<HospitalEntry, 'id'>;
 
 export interface Patient {
   id: string;

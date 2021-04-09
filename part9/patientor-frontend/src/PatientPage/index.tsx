@@ -5,7 +5,7 @@ import { Button, Container, Icon } from 'semantic-ui-react';
 import AddEntryModal from '../AddEntryModal';
 import { apiBaseUrl } from '../constants';
 import { updatePatient, useStateValue } from '../state';
-import { Patient, Entry, GenderIcon, HealthCheckEntry } from '../types';
+import { Patient, Entry, GenderIcon, NewEntry } from '../types';
 import EntryDetails from './EntryDetails';
 
 const PatientPage = () => {
@@ -23,7 +23,7 @@ const PatientPage = () => {
       console.error(e);
     }
   };
-  const submitNewEntry = async (values: Omit<HealthCheckEntry, 'id'>) => {
+  const submitNewEntry = async (values: NewEntry) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const { data: entryFromApi } = await axios.post<Entry>(
