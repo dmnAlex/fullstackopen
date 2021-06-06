@@ -1,64 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Field, Form, Formik } from 'formik';
 import { Button, Grid, Header } from 'semantic-ui-react';
 import { DiagnosisSelection, NumberField, TextField, TypeField, TypeOption } from '../AddPatientModal/FormField';
 import { useStateValue } from '../state';
 import { CardType, NewEntry } from '../types';
+import { initialValuesArray, yupSchema } from './yup';
+
 
 interface Props {
   onSubmit: (values: NewEntry) => void;
   onCancel: () => void;
 }
 
+const typeOptions: TypeOption[] = [
+  { value: CardType.HealthCheck, label: "HealthCheck" },
+  { value: CardType.OccupationalHealthcare, label: "OccupationalHealthcare" },
+  { value: CardType.Hospital, label: "Hospital" }
+];
+
 const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
   const [{ diagnoses }] = useStateValue();
-
-  const typeOptions: TypeOption[] = [
-    { value: CardType.HealthCheck, label: "HealthCheck" },
-    { value: CardType.OccupationalHealthcare, label: "OccupationalHealthcare" },
-    { value: CardType.Hospital, label: "Hospital" }
-  ];
-
-  // const init = {
-  //   description: "",
-  //   date: "",
-  //   specialist: "",
-  //   discharge: {
-  //     date: "",
-  //     criteria: ""
-  //   },
-  //   type: CardType.Hospital
-  // };
+  const [iniVal, setIniVal] = useState<NewEntry>(initialValuesArray[0]);
 
   return (
     <Formik
-      initialValues={{
-        description: "",
-        date: "",
-        specialist: "",
-        discharge: {
-          date: "",
-          criteria: ""
-        },
-        type: "Hospital"
-      }}
+      enableReinitialize={true}
+      initialValues={iniVal}
+      validationSchema={yupSchema}
       onSubmit={onSubmit}
-      validate={values => {
-        const requiredError = "Field is required";
-        const errors: { [field: string]: string } = {};
-        if (!values.date) {
-          errors.date = requiredError;
-        }
-        if (!values.description) {
-          errors.description = requiredError;
-        }
-        if (!values.specialist) {
-          errors.specialist = requiredError;
-        }
-        return errors;
-      }}
     >
-      {({ isValid, dirty, setFieldValue, setFieldTouched, values }) => {
+      {({ isValid, dirty, setFieldValue, setFieldTouched, values, handleReset }) => {
+        const onChange = (event: React.SyntheticEvent<HTMLElement, Event>) => {
+          const target = event.target as HTMLSelectElement;
+          const value = target.value as CardType;
+          const index = typeOptions.map(item => item.value).indexOf(value);
+          setFieldValue('type', value);
+          setIniVal(initialValuesArray[index]);
+          handleReset();
+        };
 
         return (
           <Form className="form ui">
@@ -66,6 +45,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               label="Type"
               name="type"
               options={typeOptions}
+              onChange={onChange}
             />
             <Field
               label="Description"

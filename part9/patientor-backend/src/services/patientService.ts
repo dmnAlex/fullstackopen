@@ -3,8 +3,8 @@ import { Entry, NewEntry, newPatientEntry, nonSensitivePatientEntries, Patient }
 import { v1 as uuid } from 'uuid';
 
 const getEntries = (): nonSensitivePatientEntries[] => {
-  return patientData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
-    id, name, dateOfBirth, gender, occupation
+  return patientData.map(({ id, name, dateOfBirth, gender, occupation, entries }) => ({
+    id, name, dateOfBirth, gender, occupation, entries
   }));
 };
 

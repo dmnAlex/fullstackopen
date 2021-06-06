@@ -40,16 +40,17 @@ interface BaseEntry {
   description: string;
   date: string;
   specialist: string;
+  type: CardType;
   diagnosisCodes?: Array<Diagnose['code']>;
 }
 
 export interface HealthCheckEntry extends BaseEntry {
-  type: "HealthCheck";
+  type: CardType.HealthCheck;
   healthCheckRating: HealthCheckRating;
 }
 
 export interface OccupationalHealthCareEntry extends BaseEntry {
-  type: "OccupationalHealthcare";
+  type: CardType.OccupationalHealthcare;
   employerName: string;
   sickLeave?: {
     startDate: string;
@@ -58,7 +59,7 @@ export interface OccupationalHealthCareEntry extends BaseEntry {
 }
 
 export interface HospitalEntry extends BaseEntry {
-  type: "Hospital";
+  type: CardType.Hospital;
   discharge: {
     date: string;
     criteria: string;

@@ -4,7 +4,7 @@ import { Container, Table, Button } from "semantic-ui-react";
 
 import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
 import AddPatientModal from "../AddPatientModal";
-import { Patient } from "../types";
+import { CardType, Patient } from "../types";
 import { apiBaseUrl } from "../constants";
 import HealthRatingBar from "../components/HealthRatingBar";
 import { addPatient, useStateValue } from "../state";
@@ -57,7 +57,7 @@ const PatientListPage = () => {
               <Table.Cell>{patient.gender}</Table.Cell>
               <Table.Cell>{patient.occupation}</Table.Cell>
               <Table.Cell>
-                <HealthRatingBar showText={false} rating={1} />
+                <HealthRatingBar showText={true} rating={patient.entries.reduce((a, c) => c.type === CardType.HealthCheck ? c.healthCheckRating : a, 0)} />
               </Table.Cell>
             </Table.Row>
           ))}

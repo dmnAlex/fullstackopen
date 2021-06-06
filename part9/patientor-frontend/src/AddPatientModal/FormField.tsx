@@ -42,16 +42,18 @@ type TypeFieldProps = {
   name: string;
   label: string;
   options: TypeOption[];
+  onChange: (_event: React.SyntheticEvent<HTMLElement, Event>) => void;
 };
 
 export const TypeField = ({
   name,
   label,
-  options
+  options,
+  onChange
 }: TypeFieldProps) => (
   <Form.Field>
     <label>{label}</label>
-    <Field as="select" name={name} className="ui dropdown">
+    <Field as="select" name={name} className="ui dropdown" onChange={onChange}>
       {options.map(option => (
         <option key={option.value} value={option.value}>
           {option.label || option.value}
@@ -66,21 +68,16 @@ interface TextProps extends FieldProps {
   placeholder: string;
 }
 
-export const TextField= ({
+export const TextField = ({
   field,
   label,
   placeholder,
-  // ...rest
 }: TextProps) => {
-  // console.log('field:', field);
-  // console.log('label:', label);
-  // console.log('placeholder:', placeholder);
-  // console.log('rest:', rest);
   return (
     <Form.Field>
       <label>{label}</label>
       <Field placeholder={placeholder} {...field} />
-      <div style={{ color:'red' }}>
+      <div style={{ color: 'red' }}>
         <ErrorMessage name={field.name} />
       </div>
     </Form.Field>
@@ -97,12 +94,12 @@ interface NumberProps extends FieldProps {
   max: number;
 }
 
-export const NumberField = ({ field, label, min, max } : NumberProps ) => (
+export const NumberField = ({ field, label, min, max }: NumberProps) => (
   <Form.Field>
     <label>{label}</label>
     <Field {...field} type='number' min={min} max={max} />
 
-    <div style={{ color:'red' }}>
+    <div style={{ color: 'red' }}>
       <ErrorMessage name={field.name} />
     </div>
   </Form.Field>
